@@ -1,7 +1,6 @@
 import axios from 'axios';
 
 const API_URL = 'https://expense-backend-4170.onrender.com/api';
-
 const api = axios.create({
   baseURL: API_URL,
 });
@@ -18,6 +17,7 @@ api.interceptors.request.use((config) => {
 export const authService = {
   register: (userData) => api.post('/auth/register', userData),
   login: (userData) => api.post('/auth/login', userData),
+  updateProfile: (userData) => api.put('/auth/profile', userData),
 };
 
 export const transactionService = {
