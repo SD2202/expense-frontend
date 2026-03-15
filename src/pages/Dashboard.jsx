@@ -26,18 +26,22 @@ const incomeCategories = [
 
 const Dashboard = () => {
   const [transactions, setTransactions] = useState([]);
-  const [summary, setSummary] = useState({});
   const [loading, setLoading] = useState(true);
+  const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth());
+  const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
+
+  const months = [
+    'January', 'February', 'March', 'April', 'May', 'June',
+    'July', 'August', 'September', 'October', 'November', 'December'
+  ];
+
+  const years = Array.from({ length: 5 }, (_, i) => new Date().getFullYear() - i);
 
   const fetchData = async () => {
     try {
       setLoading(true);
-      const [transRes, summaryRes] = await Promise.all([
-        transactionService.getTransactions(),
-        transactionService.getSummary(),
-      ]);
+      const transRes = await transactionService.getTransactions();
       setTransactions(transRes.data);
-      setSummary(summaryRes.data);
     } catch (err) {
       console.error('Error fetching data', err);
     } finally {
@@ -67,6 +71,18 @@ const Dashboard = () => {
     }
   };
 
+  const filteredTransactions = transactions.filter(t => {
+    const d = new Date(t.date);
+    return d.getMonth() === selectedMonth && d.getFullYear() === selectedYear;
+  });
+
+  const monthlySummary = filteredTransactions.reduce((acc, t) => {
+    if (t.type === 'income') acc.income += t.amount;
+    else acc.expense += t.amount;
+    acc.balance = acc.income - acc.expense;
+    return acc;
+  }, { income: 0, expense: 0, balance: 0 });
+
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
@@ -77,16 +93,38 @@ const Dashboard = () => {
           </h1>
           <p className="text-slate-500 mt-1">Monitor your income, expenses and savings</p>
         </div>
-        <button 
-          onClick={fetchData} 
-          className="flex items-center gap-2 text-sm font-medium text-slate-600 hover:text-indigo-600 transition-colors bg-white px-4 py-2 rounded-lg border border-slate-200 shadow-sm"
-        >
-          <RefreshCcw size={16} className={loading ? 'animate-spin' : ''} />
-          Refresh Data
-        </button>
+        <div className="flex flex-wrap items-center gap-3">
+          <div className="flex items-center gap-2 bg-white px-3 py-1.5 rounded-lg border border-slate-200 shadow-sm">
+            <select 
+              value={selectedMonth} 
+              onChange={(e) => setSelectedMonth(parseInt(e.target.value))}
+              className="text-sm font-medium text-slate-600 bg-transparent outline-none cursor-pointer"
+            >
+              {months.map((m, i) => (
+                <option key={m} value={i}>{m}</option>
+              ))}
+            </select>
+            <select 
+              value={selectedYear} 
+              onChange={(e) => setSelectedYear(parseInt(e.target.value))}
+              className="text-sm font-medium text-slate-600 bg-transparent outline-none cursor-pointer border-l border-slate-200 pl-2"
+            >
+              {years.map(y => (
+                <option key={y} value={y}>{y}</option>
+              ))}
+            </select>
+          </div>
+          <button 
+            onClick={fetchData} 
+            className="flex items-center gap-2 text-sm font-medium text-slate-600 hover:text-indigo-600 transition-colors bg-white px-4 py-2 rounded-lg border border-slate-200 shadow-sm"
+          >
+            <RefreshCcw size={16} className={loading ? 'animate-spin' : ''} />
+            Refresh Data
+          </button>
+        </div>
       </div>
 
-      <DashboardCards summary={summary} />
+      <DashboardCards summary={monthlySummary} />
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         <div className="lg:col-span-1">
@@ -94,8 +132,8 @@ const Dashboard = () => {
         </div>
         
         <div className="lg:col-span-2 space-y-8">
-          <Charts transactions={transactions} />
-          <TransactionList transactions={transactions} onDelete={handleDeleteTransaction} />
+          <Charts transactions={filteredTransactions} />
+          <TransactionList transactions={filteredTransactions} onDelete={handleDeleteTransaction} />
         </div>
       </div>
     </div>
