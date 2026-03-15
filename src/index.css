@@ -1,0 +1,86 @@
+@import "tailwindcss";
+
+@theme {
+  --color-primary: #6366f1;
+  --color-secondary: #4f46e5;
+  --color-income: #22c55e;
+  --color-expense: #ef4444;
+}
+
+:root {
+  --font-heading: 'Plus Jakarta Sans', sans-serif;
+  --font-body: 'Plus Jakarta Sans', sans-serif;
+  
+  --color-bg-start: #f8fafc;
+  --color-bg-end: #e0e7ff;
+}
+
+body {
+  font-family: var(--font-body);
+  background-color: var(--color-bg-start);
+  color: #0f172a;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Base utility expansions using standard nesting or utility mapping */
+@layer components {
+  .glass-card {
+    @apply bg-white/80 backdrop-blur-xl border border-white/50 shadow-[0_8px_32px_rgba(0,0,0,0.04)] rounded-2xl transition-all duration-300;
+  }
+  
+  .glass-card:hover {
+    @apply shadow-[0_12px_48px_rgba(99,102,241,0.08)] border-white/80 translate-y-[-2px];
+  }
+
+  .btn-primary {
+    @apply bg-gradient-to-r from-indigo-600 to-violet-600 text-white font-bold rounded-xl py-2 px-6 
+           transition-all duration-300 shadow-md shadow-indigo-500/30 
+           hover:shadow-lg hover:shadow-indigo-500/40 hover:-translate-y-0.5 active:translate-y-0;
+  }
+
+  .input-field {
+    @apply w-full border border-slate-200 rounded-xl px-4 py-3 bg-slate-50/50 
+           focus:outline-none focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500 
+           focus:bg-white transition-all duration-300 text-slate-800 font-medium;
+  }
+
+  .label-text {
+    @apply block text-sm font-bold text-slate-700 mb-2 tracking-wide;
+  }
+
+  .card {
+    @apply bg-white rounded-2xl shadow-sm border border-slate-100 p-6;
+  }
+}
+
+@layer utilities {
+  .animate-fade-in {
+    animation: fadeIn 0.5s ease-out forwards;
+  }
+  
+  .animate-slide-up {
+    animation: slideUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  }
+  
+  .bg-animated-gradient {
+    background: linear-gradient(-45deg, #f8fafc, #eff6ff, #f5f3ff, #fcfaf8);
+    background-size: 400% 400%;
+    animation: gradientBG 15s ease infinite;
+  }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes gradientBG {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
