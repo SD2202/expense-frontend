@@ -1,5 +1,5 @@
 import React from 'react';
-import { Trash2, ShoppingBag, Utensils, Home, Car, Zap, Heart, Gift, MoreHorizontal, Briefcase, Monitor, Building } from 'lucide-react';
+import { Trash2, ShoppingBag, Utensils, Home, Car, Zap, Heart, Gift, MoreHorizontal, Briefcase, Monitor, Building, Lock } from 'lucide-react';
 
 const categoryIcons = {
   Food: Utensils,
@@ -70,13 +70,25 @@ const TransactionList = ({ transactions, onDelete }) => {
                     {t.type === 'income' ? '+' : '-'}₹{t.amount.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                   </td>
                   <td className="py-4 px-4 text-center">
-                    <button
-                      onClick={() => onDelete(t._id)}
-                      className="p-2 text-slate-400 hover:text-rose-500 hover:bg-rose-50 rounded-xl transition-all inline-flex justify-center items-center"
-                      title="Delete Transaction"
-                    >
-                      <Trash2 size={18} strokeWidth={2.5} />
-                    </button>
+                    {(() => {
+                      const now = new Date();
+                      const transDate = new Date(t.date);
+                      const isCurrentMonth = transDate.getMonth() === now.getMonth() && transDate.getFullYear() === now.getFullYear();
+                      
+                      return isCurrentMonth ? (
+                        <button
+                          onClick={() => onDelete(t._id)}
+                          className="p-2 text-slate-400 hover:text-rose-500 hover:bg-rose-50 rounded-lg transition-all"
+                          title="Delete Transaction"
+                        >
+                          <Trash2 size={18} />
+                        </button>
+                      ) : (
+                        <div className="p-2 text-slate-300" title="Past transactions cannot be deleted">
+                          <Lock size={18} />
+                        </div>
+                      );
+                    })()}
                   </td>
                 </tr>
               );
