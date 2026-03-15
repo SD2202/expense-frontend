@@ -5,7 +5,7 @@ import Navbar from './components/Navbar';
 import Dashboard from './pages/Dashboard';
 import Login from './pages/Login';
 import Register from './pages/Register';
-import Settings from './pages/Settings';
+import Settings from './pages/settings';
 
 const PrivateRoute = ({ children }) => {
   const { user, loading } = useAuth();
