@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { Wallet, LogOut, LayoutDashboard, ListOrdered } from 'lucide-react';
+import { Wallet, LogOut, LayoutDashboard, Settings as SettingsIcon } from 'lucide-react';
 
 const Navbar = () => {
   const { user, logout } = useAuth();
@@ -53,6 +53,10 @@ const Navbar = () => {
                 <Link to="/" className="hidden md:flex text-slate-600 hover:text-indigo-600 items-center gap-2 font-semibold transition-colors px-3 py-2 rounded-lg hover:bg-slate-100/50">
                   <LayoutDashboard size={20} />
                   Dashboard
+                </Link>
+                <Link to="/settings" className="hidden md:flex text-slate-600 hover:text-indigo-600 items-center gap-2 font-semibold transition-colors px-3 py-2 rounded-lg hover:bg-slate-100/50">
+                  <SettingsIcon size={20} />
+                  Settings
                 </Link>
                 <div className="hidden md:block h-8 w-px bg-slate-200/60 mx-2"></div>
                 <div className="flex items-center gap-4 bg-white/50 border border-white/60 px-4 py-1.5 rounded-full shadow-sm">
