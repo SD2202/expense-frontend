@@ -2,13 +2,18 @@ import React, { useState } from 'react';
 import { PlusCircle } from 'lucide-react';
 
 const TransactionForm = ({ onSubmit, expenseCategories, incomeCategories }) => {
+  const now = new Date();
+  const currentMonthStart = new Date(now.getFullYear(), now.getMonth(), 1).toISOString().split('T')[0];
+  const currentMonthEnd = new Date(now.getFullYear(), now.getMonth() + 1, 0).toISOString().split('T')[0];
+
   const [formData, setFormData] = useState({
     amount: '',
     type: 'expense',
     category: '',
     description: '',
-    date: new Date().toISOString().split('T')[0],
+    date: now.toISOString().split('T')[0],
   });
+  const [error, setError] = useState('');
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -16,6 +21,16 @@ const TransactionForm = ({ onSubmit, expenseCategories, incomeCategories }) => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    
+    // Additional validation for current month
+    const selectedDate = new Date(formData.date);
+    const now = new Date();
+    if (selectedDate.getMonth() !== now.getMonth() || selectedDate.getFullYear() !== now.getFullYear()) {
+      setError('You can only add transactions for the current month.');
+      return;
+    }
+
+    setError('');
     onSubmit({ ...formData, amount: Number(formData.amount) });
     setFormData({
       amount: '',
@@ -37,6 +52,13 @@ const TransactionForm = ({ onSubmit, expenseCategories, incomeCategories }) => {
           <p className="text-sm text-slate-500">Record your income and expenses</p>
         </div>
       </div>
+
+      {error && (
+        <div className="mb-6 p-4 bg-rose-50 border border-rose-100 text-rose-600 rounded-xl text-sm font-medium animate-fade-in flex items-center gap-2">
+           <div className="w-1.5 h-1.5 rounded-full bg-rose-500"></div>
+           {error}
+        </div>
+      )}
       
       <form onSubmit={handleSubmit} className="space-y-5">
         <div>
@@ -122,6 +144,8 @@ const TransactionForm = ({ onSubmit, expenseCategories, incomeCategories }) => {
             value={formData.date}
             onChange={handleChange}
             className="input-field cursor-pointer"
+            min={currentMonthStart}
+            max={currentMonthEnd}
             required
           />
         </div>
